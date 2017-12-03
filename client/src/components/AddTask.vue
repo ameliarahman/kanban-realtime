@@ -31,7 +31,7 @@
               </div>
               
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-default" @click="addItem">Submit</button>
+            <button type="submit" class="btn btn-default" data-dismiss="modal" @click="addItem">Submit</button>
             </form>
           </div>
         </div>
@@ -63,6 +63,10 @@
       addItem: function () {
         db.ref('/backlog').push(this.task)
         alert('Successfully added 1 task!')
+        this.task.title = ''
+        this.task.description = ''
+        this.task.point = null
+        this.task.assignedto = ''
       }
     }
   }

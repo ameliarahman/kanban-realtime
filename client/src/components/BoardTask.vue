@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
+    <h2>{{ msg }}</h2>
     <add-task> </add-task>
     <div class="row">
         <div class="col-md-3"> 

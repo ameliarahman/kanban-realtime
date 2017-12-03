@@ -1,30 +1,137 @@
 <template>
-  <div class="panel-group">
-    <div class="panel panel-default">
-      <div class="panel-heading">Doing</div>
-      <div class="panel-body">
-        <div class="panel-group">
-          <div class="panel panel-default">
-            <div class="panel-heading">hoamm</div>
-                <div class="panel-body">
-                  Hoams
+<div class="panel-group">
+  <div class="panel panel-default">
+    <div class="panel-heading" id="heading-title">Doing</div>
+    <div class="panel-body " v-for="(task, index) in tasks" :key="index">
+      <div class="panel-group">
+        <div class="panel panel-default">
+          <div class="panel-heading">{{task.title}}</div>
+          <div class="panel-body text-left">
+            Point : {{task.point}} <br> Description : {{task.description}} Assigned to : {{task.assignedto}}
+            <div>
+              <a @click="showDetail(task)" href="#" data-toggle="modal" data-target="#detailDoing" class="btn btn-primary" role="button">Show Detail</a>
+            </div>
+            <div id="detailDoing" class="modal fade" role="dialog">
+              <div class="modal-dialog text-left">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h5 class="modal-title"> Detail Task : {{taskDetail.title}}</h5>
+                  </div>
+                  <div class="modal-body ">
+                    <form>
+                      <div class="form-group">
+                        <h5>Description :</h5>
+                        {{taskDetail.description}}
+                      </div>
+                      <div class="form-group">
+                        <h5>Point :</h5>
+                        {{taskDetail.point}}
+                      </div>
+                      <div class="form-group">
+                        <h5>Assign to :</h5>
+                        {{taskDetail.assignedto}}
+                      </div>
+                      <div class="form-group">
+                          <h5>Status :</h5>
+                         Doing
+                      </div>
+                       
+          
+                    <a type="submit" data-toggle="modal" data-target="#delete-task-doing" class="btn btn-danger" role="button">Delete</a>
+                    <div id="delete-task-doing" class="modal fade" role="dialog">
+                      <div class="modal-dialog modal-xs text-left">
+                        <div class="modal-content">
+
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h5 class="modal-title"> Are you sure you want to delete?</h5>
+                          </div>
+
+                          <div class="modal-body">
+                            <a href="#" class="btn btn-danger" role="button" data-dismiss="modal" @click="deleteTask">Yes</a>
+                            <a href="#" class="btn btn-info" role="button" data-dismiss="modal">Cancel</a>
+
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                      <button type="submit" class="btn btn-warning" data-dismiss="modal" @click="move('todo')">Todo</button>
+                       <button type="submit" class="btn btn-success" data-dismiss="modal" @click="move('done')">Done</button>
+                    </form>
+                  </div>
                 </div>
+
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
+
     </div>
   </div>
+
+</div>
 </template>
 
 
 <script>
-  export default {
-    props: ['taskTitle'],
-    name: 'Doing'
+import db from '@/firebase/firebase'
+export default {
+  props: ['tasks'],
+  name: 'BackLog',
+  data () {
+    return {
+      taskDetail: {
+        title: '',
+        description: '',
+        point: '',
+        assignedto: '',
+        key: ''
+      }
+    }
+  },
+  methods: {
+    showDetail (task) {
+      this.taskDetail.title = task.title
+      this.taskDetail.description = task.description
+      this.taskDetail.point = task.point
+      this.taskDetail.assignedto = task.assignedto
+      this.taskDetail.key = task['.key']
+    },
+    deleteTask () {
+      db.ref(`/doing/${this.taskDetail.key}`).remove()
+    },
+    move (direction) {
+      const newTask = {
+        title: this.taskDetail.title,
+        description: this.taskDetail.description,
+        point: this.taskDetail.point,
+        assignedto: this.taskDetail.assignedto
+      }
+      if (direction === 'todo') {
+        db.ref(`/todo`).push(newTask)
+      } else if (direction === 'done') {
+        db.ref(`/done`).push(newTask)
+      }
+      this.deleteTask()
+    }
   }
+}
 </script>
 
 
-<style>
 
+<style scoped>
+.form-group {
+  padding: 5px;
+}
+#heading-title {
+  background-color: blue;
+  color: white;
+}
 </style>
